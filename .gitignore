@@ -1,0 +1,11 @@
+__pycache__/
+.venv/
+*.zip
+*.pdf
+*.csv
+*.xlsx
+*.xlsm
+*.png
+*.jpg
+*.jpeg
+

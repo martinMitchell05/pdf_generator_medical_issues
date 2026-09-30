@@ -1,0 +1,33 @@
+INFORMES DE TEST DE AIRE ESPIRADO
+=================================
+
+PRIMERA VEZ (solo una vez)
+1. Descomprimí el ZIP y dejá la carpeta donde quieras (Escritorio, Documentos...).
+2. Doble clic en "Generar informes.command".
+3. Si macOS lo bloquea: clic derecho > Abrir > Abrir.
+   Si sigue bloqueado, abrí Terminal y pegá:
+       xattr -dr com.apple.quarantine "ruta/a/la/carpeta"
+   (podés arrastrar la carpeta a la Terminal para completar la ruta).
+
+USO DIARIO
+1. Doble clic en "Generar informes.command".
+2. Elegí una opción:
+   1 = cargar un paciente a mano (pregunta cada dato)
+   2 = generar todos los informes desde una planilla Excel/CSV
+   3 = crear una planilla modelo para completar
+3. Los PDF quedan en la carpeta "informes_generados".
+
+PLANILLA
+- Una fila por paciente. Abrí "pacientes_modelo.xlsx" (opción 3) como guía.
+- Obligatorios: nombre, fecha_estudio y valores basales (h2_0, ch4_0).
+- Se puede guardar como "pacientes.xlsx" en esta misma carpeta, o arrastrar
+  el archivo a la Terminal cuando lo pida.
+
+PERSONALIZAR (config.json, se edita con TextEdit)
+- Datos del centro, procedimiento, criterio, profesional y matrícula.
+- Logo: poner "logo.png" en la carpeta. Firma: poner "firma.png".
+
+CONCLUSIÓN
+- Si la columna "conclusion" queda vacía, el programa propone una según el
+  criterio de config.json. Es una sugerencia: debe ser revisada y validada
+  por la profesional antes de entregar el informe.

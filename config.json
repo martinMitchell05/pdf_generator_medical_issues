@@ -1,0 +1,52 @@
+{
+  "centro": {
+    "nombre": "AIRTEST",
+    "web": "airtest.com.ar",
+    "logo": "logo.png",
+    "lineas_encabezado": [
+      "Junin 875 1ero- 4 - CABA",
+      "Est. de la Bahia | Blv. del Mirador 220 1ero 102. Tigre",
+      "Alvear 331 - Martinez - PBA",
+      "CEL./WA: +054 9 11 6218 8925",
+      "www.airtest.com.ar - info@airtest.com.ar"
+    ],
+    "sede_default": "Junin 875 1ero- 4 - CABA",
+    "leyenda": "Informe Confidencial. Secreto médico. Alcances del código 156 del Código Penal. El resultado debe ser evaluado en el contexto de una consulta médica con el profesional que lo ha solicitado. INFORME VALIDADO ELECTRÓNICAMENTE. LOS DATOS SE ENCUENTRAN RESERVADOS EN EL SISTEMA INFORMÁTICO."
+  },
+
+  "estudio": {
+    "titulo": "TAE SOBRECRECIMIENTO BACTERIANO INTESTINAL",
+    "gases": "H2 CH4",
+    "titulo_grafico": "TEST DE AIRE ESPIRADO",
+    "estimulo_default": "glucosa",
+    "dieta_default": "Suficiente",
+    "cobertura_default": "particular",
+    "intervalo_min": 15,
+    "duracion_min": 120,
+    "tabla_hasta_min": 180,
+    "procedimiento": "Sobrecrecimiento bacteriano: Procedimiento: Se tomó muestra basal de aire espirado y se determinó la concentración de H2 y CH4 con cromatógrafo de gases GastroCheck Bedfont. Luego se administraron 75g de Glucosa disuelta en 240ml de agua. Posteriormente se obtuvieron nuevas muestras cada 15 minutos durante 2hs.",
+    "criterio": "Sobrecrecimiento Bacteriano: Criterios de positividad: Aumento en los niveles de H2 de más de 20 ppm (SIBO) y/o en los niveles de CH4 de más de 10 ppm (IMO) sobre el basal antes de los 90 minutos."
+  },
+
+  "criterios": {
+    "h2_umbral_ppm": 20,
+    "ch4_umbral_ppm": 10,
+    "ventana_min": 90,
+    "conclusion_automatica": true,
+    "conclusiones": {
+      "normal": "Patrón fermentativo intestinal con valores compatibles con la normalidad",
+      "sibo": "Patrón fermentativo intestinal compatible con SIBO (aumento de H2 sobre el basal)",
+      "imo": "Patrón fermentativo intestinal compatible con IMO (aumento de CH4 sobre el basal)",
+      "ambos": "Patrón fermentativo intestinal compatible con SIBO e IMO (aumento de H2 y CH4 sobre el basal)"
+    }
+  },
+
+  "profesional": {
+    "nombre": "Sattino Mauro",
+    "cargo": "Médico",
+    "matricula": "MN: 106112",
+    "firma_imagen": "firma.png"
+  },
+
+  "carpeta_salida": "informes_generados"
+}

@@ -1,0 +1,19 @@
+name: Compilar para macOS
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: macos-latest   # Apple Silicon (M1/M2/M3/M4). Ver README para Intel.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: ./build_mac.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Informes_AirTest_macOS
+          path: dist/Informes_AirTest.zip
