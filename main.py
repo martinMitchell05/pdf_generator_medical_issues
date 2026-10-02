@@ -1,4 +1,4 @@
-"""Generador de informes de test de aire espirado - menú de consola."""
+""" main : menú de CLI """
 import json
 import re
 import sys
@@ -13,35 +13,37 @@ def carpeta_base():
     """Carpeta del ejecutable (o del script en desarrollo)."""
     if getattr(sys, "frozen", False):
         return Path(sys.executable).parent
-    return Path(__file__).resolve().parent
+    return Path(__file__).resolve().parent  # retorna ruta absoluta del archivo + directorio dentro del que se encuentra
 
 
 BASE = carpeta_base()
 
 
 def cargar_config():
-    ruta = BASE / "config.json"
+    ruta = BASE / "config.json"     # crear el path al json (absoluto)
     if not ruta.exists():
         raise FileNotFoundError(f"Falta el archivo config.json en {BASE}")
     with open(ruta, encoding="utf-8") as f:
-        return json.load(f)
+        return json.load(f)     # cargar el archivo json
 
 
+# --- limpiar el nombre del archivo final
 def nombre_archivo(reg):
     limpio = unicodedata.normalize("NFKD", reg["nombre"]).encode("ascii", "ignore").decode()
     limpio = re.sub(r"[^A-Za-z0-9]+", "_", limpio).strip("_") or "paciente"
     return f"{limpio}_{reg['fecha_estudio']}"
 
 
-def ruta_libre(carpeta, base):
-    ruta = carpeta / f"{base}.pdf"
-    n = 2
+# --- crear igualmente la ruta si ya existía ( (1), (2), ... )
+def ruta_libre(carpeta, file):
+    ruta = carpeta / f"{file}.pdf"
+    n = 1
     while ruta.exists():
-        ruta = carpeta / f"{base}_{n}.pdf"
+        ruta = carpeta / f"{file}_{n}.pdf"
         n += 1
     return ruta
 
-
+# --- generar los archivos pdf
 def generar_todos(registros, cfg):
     salida = BASE / cfg["carpeta_salida"]
     salida.mkdir(exist_ok=True)
@@ -60,30 +62,40 @@ def limpiar_ruta(texto):
     return Path(texto.replace("\\ ", " ")).expanduser()
 
 
+# --- carga de datos manual
 def opcion_manual(cfg):
     reg = pedir_manual(cfg)
-    print(f"\nConclusión que saldrá en el informe:\n  {reg['conclusion'] or '(vacía)'}")
+    # print(f"\nConclusión que saldrá en el informe:\n  {reg['conclusion'] or '(vacía)'}")
+
     salida, gen = generar_todos([reg], cfg)
     print(f"\nInforme guardado en: {salida}")
 
 
+# --- carga de datos desde una planilla
 def opcion_planilla(cfg):
+
     defecto = BASE / "pacientes.xlsx"
-    r = input(f"\nArchivo Excel/CSV (arrastralo acá o Enter para '{defecto.name}'): ")
+    r = input(f"\nArchivo Excel/CSV (arrastralo acá o Enter para cargar desde '{defecto.name}'): ")
     ruta = limpiar_ruta(r) if r.strip() else defecto
+
     registros, errores = leer_planilla(ruta, cfg)
     print(f"\nPacientes válidos: {len(registros)}   Con errores: {len(errores)}")
+
     for e in errores:
         print(f"  ERROR  {e}")
     if not registros:
         return
     if errores and input("\nHay filas con errores que se omitirán. ¿Continuar? (s/n): ").lower() != "s":
         return
+
+    
     print("\nGenerando informes...")
     salida, gen = generar_todos(registros, cfg)
+
     print(f"\n{len(gen)} informes guardados en: {salida}")
 
 
+# --- opción de ver/crear un modelo de planilla
 def opcion_modelo():
     ruta = BASE / "pacientes_modelo.xlsx"
     cfg = cargar_config()

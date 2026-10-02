@@ -1,4 +1,4 @@
-"""Armado del PDF con la estructura del informe del centro (ReportLab)."""
+""" Construcción del informe pdf, empleando ReportLab """
 import re
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -42,9 +42,9 @@ ST_CELDA_ENC = _estilo("celenc", fontName="Helvetica-Bold", fontSize=7.6, leadin
 
 
 def _sub(texto):
-    """Escapa el texto y pone H2 / CH4 con subíndice real (sin caracteres unicode)."""
+    """Escapa el texto y pone H2 / C13 con subíndice real (sin caracteres unicode)."""
     t = escape(str(texto))
-    t = re.sub(r"\bCH4\b", "CH<sub>4</sub>", t)
+    t = re.sub(r"\bC13\b", "C<sub>13</sub>", t)
     t = re.sub(r"\bH2\b", "H<sub>2</sub>", t)
     return t
 
@@ -58,15 +58,20 @@ def _num(v):
 def _ruta(base_dir, nombre):
     if not nombre:
         return None
+    
     p = Path(nombre)
     if not p.is_absolute():
         p = Path(base_dir) / p
+
+
     return p if p.exists() else None
 
 
 def _encabezado(cfg, base_dir):
+
     centro = cfg["centro"]
     logo = _ruta(base_dir, centro.get("logo"))
+
     if logo:
         marca = Image(str(logo), width=38 * mm, height=12 * mm, kind="proportional")
         marca.hAlign = "LEFT"
@@ -75,36 +80,47 @@ def _encabezado(cfg, base_dir):
             f'<font color="#6EC1E4" size="30">{escape(centro["nombre"][:3])}</font>'
             f'<font color="#3B9CC9" size="30">{escape(centro["nombre"][3:])}</font>',
             _estilo("logo", fontSize=30, leading=32))
-    direccion = Paragraph("<br/>".join(escape(l) for l in centro["lineas_encabezado"]),
-                          ST_DIRECCION)
+        
+    direccion = Paragraph("<br/>".join(escape(l) for l in centro["lineas_encabezado"]), ST_DIRECCION)
+    
     t = Table([[marca], [direccion]], colWidths=[100 * mm], hAlign="LEFT")
     t.setStyle(TableStyle([("LEFTPADDING", (0, 0), (-1, -1), 0),
                            ("TOPPADDING", (0, 0), (-1, -1), 0),
                            ("BOTTOMPADDING", (0, 0), (-1, -1), 1)]))
+
+    
     return t
 
 
 def _datos_paciente(reg):
+
     def fila(etiqueta, valor):
-        return Paragraph(f"{etiqueta}: <b>{escape(valor)}</b>" if valor
-                         else f"{etiqueta}:", ST_PACIENTE)
+        return Paragraph(f"{etiqueta}: <b>{escape(valor)}</b>" if valor else f"{etiqueta}:", ST_PACIENTE)
+    
     edad = f"{reg['edad']} años" if reg["edad"] else ""
+    
     t = Table(
         [[fila("Paciente", reg["nombre"]), fila("DNI", reg["dni"])],
-         [fila("Cobertura", reg["cobertura"]), fila("Edad", edad)],
-         [fila("N°", reg["nro_afiliado"]), ""]],
+         [fila("Obra Social", reg["obra_social"]), fila("Edad", edad)]],
+        #  [fila("N°", reg["nro_afiliado"]), ""]],
         colWidths=[100 * mm, 66 * mm], hAlign="LEFT")
+    
     t.setStyle(TableStyle([("LEFTPADDING", (0, 0), (-1, -1), 0),
                            ("TOPPADDING", (0, 0), (-1, -1), 0),
                            ("BOTTOMPADDING", (0, 0), (-1, -1), 0)]))
+    
+    
     return t
 
 
 def _tabla_y_grafico(reg, cfg):
+
     filas = [[Paragraph("TIEMPO", ST_CELDA_ENC), Paragraph("H<sub>2</sub>", ST_CELDA_ENC),
-              Paragraph("CH<sub>4</sub>", ST_CELDA_ENC)]]
-    for t in tiempos_tabla(cfg):
-        filas.append([f"{t:02d}", _num(reg["h2"].get(t)), _num(reg["ch4"].get(t))])
+              Paragraph("C<sub>13</sub>", ST_CELDA_ENC)]]
+    
+    for t in tiempos_tabla(cfg, reg["intervalo_tiempo"]):
+        filas.append([f"{t:02d}", _num(reg["h2"].get(t)), _num(reg["c13"].get(t))])
+    
     tabla = Table(filas, colWidths=[15 * mm, 9 * mm, 10 * mm], rowHeights=13.2)
     tabla.setStyle(TableStyle([
         ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
@@ -114,23 +130,24 @@ def _tabla_y_grafico(reg, cfg):
         ("TOPPADDING", (0, 0), (-1, -1), 1), ("BOTTOMPADDING", (0, 0), (-1, -1), 1),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
     ]))
+
     grafico = Image(crear_grafico(reg, cfg), width=ANCHO_MM * mm, height=ALTO_MM * mm)
     conjunto = Table([[tabla, grafico]], colWidths=[36 * mm, 130 * mm], hAlign="LEFT")
     conjunto.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "TOP"),
                                   ("LEFTPADDING", (0, 0), (-1, -1), 0),
                                   ("RIGHTPADDING", (0, 0), (-1, -1), 0),
                                   ("TOPPADDING", (0, 0), (-1, -1), 0)]))
+    
+    
     return conjunto
 
 
 def _bloque(etiqueta, texto):
-    return Paragraph(f"<b>{etiqueta}:</b> {_sub(texto)}" if texto
-                     else f"<b>{etiqueta}:</b>", ST_TEXTO)
+    return Paragraph(f"<b>{etiqueta}:</b> {_sub(texto)}" if texto else f"<b>{etiqueta}:</b>", ST_TEXTO)
 
 
 def _linea():
-    return HRFlowable(width="100%", thickness=0.6, color=GRIS_CLARO,
-                      spaceBefore=4, spaceAfter=6)
+    return HRFlowable(width="100%", thickness=0.6, color=GRIS_CLARO, spaceBefore=4, spaceAfter=6)
 
 
 def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
@@ -155,19 +172,19 @@ def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
         _encabezado(cfg, base_dir), _linea(),
         _datos_paciente(reg), _linea(),
         Paragraph(f"Fecha de estudio: {escape(reg['fecha_estudio'])} - "
-                  f"COBERTURA: {escape(reg['cobertura'])}", ST_FECHA),
+                  f"OBRA SOCIAL: {escape(reg['obra_social'])}", ST_FECHA),
         Paragraph(escape(est["titulo"]), ST_TITULO),
         Paragraph(_sub(est["gases"]), ST_TITULO),
         Paragraph(f"Sede: {escape(reg['sede'])}", ST_SEDE),
         Spacer(1, 3 * mm),
         _tabla_y_grafico(reg, cfg),
         Spacer(1, 4 * mm),
-        _bloque("Estímulo", reg["estimulo"]),
+        _bloque("Sustrato", reg["sustrato"]),
         _bloque("Dieta previa", reg["dieta_previa"]),
-        _bloque("Procedimiento", est["procedimiento"]),
+        # _bloque("Procedimiento", est["procedimiento"]),
         _bloque("Causa", reg["causa"]),
-        _bloque("Criterio", est["criterio"]),
-        _bloque("Conclusión", reg["conclusion"]),
+        # _bloque("Criterio", est["criterio"]),
+        _bloque("Diagnóstico", reg["diagnostico"]),
         _bloque("Comentarios", reg["comentarios"]),
         Spacer(1, 10 * mm),
     ]
@@ -179,8 +196,10 @@ def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
         story.append(img)
     else:
         story.append(Spacer(1, 12 * mm))
+
     story.append(Paragraph(escape(prof["nombre"]), ST_FIRMA))
     story.append(Paragraph(escape(f"{prof['cargo']} - {prof['matricula']}"), ST_FIRMA))
 
     doc.build(story, onFirstPage=decorar, onLaterPages=decorar)
+    
     return ruta_salida
