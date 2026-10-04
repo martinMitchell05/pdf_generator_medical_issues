@@ -8,7 +8,6 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
-# from criterios import evaluar
 
 CAMPOS_TEXTO = [
     "nombre", "dni", "edad", "sexo", "obra_social", "fecha_estudio",
@@ -39,7 +38,7 @@ def tiempos_tabla(cfg, intervalo=None):
 
 def columnas(cfg):
     t = tiempos_medicion(cfg)
-    return CAMPOS_TEXTO + [f"h2_{x}" for x in t] + [f"c13_{x}" for x in t]
+    return CAMPOS_TEXTO + [f"h2_{x}" for x in t] + [f"ch4_{x}" for x in t]
 
 
 
@@ -126,15 +125,17 @@ def armar_registro(fila, cfg):
     
     reg["fecha_estudio"] = parse_fecha(fila.get("fecha_estudio"))
     reg["obra_social"] = reg["obra_social"] or est["cobertura_default"]
-    reg["sede"] = reg["sede"] or cfg["centro"]["sede_default"]
+    
+    reg["sede"] = (cfg["centro_cemafe"]["sede_default"] if reg["sede"] == "2" else cfg["centro_tostado"]["sede_default"])
+
     reg["sustrato"] = reg["sustrato"] or est["estimulo_default"]
     reg["dieta_previa"] = reg["dieta_previa"] or est["dieta_default"]
     reg["intervalo_tiempo"] = parse_intervalo(fila.get("intervalo_tiempo"), cfg)
     tiempos = tiempos_medicion(cfg, reg["intervalo_tiempo"])
 
-    reg["h2"], reg["c13"] = {}, {}
+    reg["h2"], reg["ch4"] = {}, {}
     for t in tiempos:
-        for gas in ("h2", "c13"):
+        for gas in ("h2", "ch4"):
             v = parse_num(fila.get(f"{gas}_{t}"))
 
             if v is not None:
@@ -143,11 +144,9 @@ def armar_registro(fila, cfg):
             
                 reg[gas][t] = v
 
-    if 0 not in reg["h2"] or 0 not in reg["c13"]:
-        raise ValueError("faltan los valores iniciales (minuto 0) de H2 y/o C13")
+    if 0 not in reg["h2"] or 0 not in reg["ch4"]:
+        raise ValueError("faltan los valores iniciales (minuto 0) de H2 y/o CH4")
 
-    # if not reg["conclusion"] and cfg["criterios"].get("conclusion_automatica", True):
-    #     reg["conclusion"] = evaluar(reg, cfg)["conclusion"]
     
     return reg
 
@@ -216,8 +215,13 @@ def leer_planilla(ruta, cfg):
 # obtener datos por entrada
 def _preguntar(texto, defecto="", obligatorio=False):
     while True:
+        
         sufijo = f" [{defecto}]" if defecto else ""
-        r = input(f"  {texto}{sufijo}: ").strip() or defecto
+        if texto != "Sede":
+            r = input(f"  {texto}{sufijo}: ").strip() or defecto
+        else:
+            r = input(f"  {texto} 1. {sufijo}, Sede 2. [ Cemafe ]: ").strip() or defecto
+
         if r or not obligatorio:
             return r
         print("    Este dato es obligatorio.")
@@ -234,7 +238,6 @@ def pedir_manual(cfg):
         "edad": _preguntar("Edad (años)"),
         "sexo": _preguntar("Sexo", " -- "),
         "obra_social": _preguntar("Obra Social", est["cobertura_default"]),
-        # "nro_afiliado": _preguntar("N° de afiliado"),
         
     }
 
@@ -252,7 +255,7 @@ def pedir_manual(cfg):
             print(f"    {e}")
 
 
-    fila["sede"] = _preguntar("Sede", cfg["centro"]["sede_default"])
+    fila["sede"] = _preguntar("Sede", cfg["centro_tostado"]["sede_default"])
     fila["sustrato"] = _preguntar("Sustrato", est["estimulo_default"])
 
     while True:
@@ -270,7 +273,7 @@ def pedir_manual(cfg):
 
     for t in tiempos_medicion(cfg, intervalo):
 
-        for gas in ("h2", "c13"):
+        for gas in ("h2", "ch4"):
             while True:
                 try:
                     v = parse_num(input(f"  {gas.upper():<3} a los {t:>3} min: "))
@@ -304,19 +307,19 @@ def crear_planilla_modelo(ruta, cfg):
         c.alignment = Alignment(horizontal="center")
 
     h2_a = [4, 8, 6, 5, 8, 4, 4, 4, 5]
-    c13_a = [6, 5, 4, 6, 5, 5, 4, 6, 6]
+    ch4_a = [6, 5, 4, 6, 5, 5, 4, 6, 6]
     h2_b = [3, 6, 12, 20, 31, 38, 35, 30, 28]
-    c13_b = [2, 2, 3, 2, 3, 2, 2, 3, 2]
+    ch4_b = [2, 2, 3, 2, 3, 2, 2, 3, 2]
     ejemplos = [
-        ("Paciente Ejemplo Uno", "11111111", 35, "M", "particular", "", "2026-09-10", h2_a, c13_a),
-        ("Paciente Ejemplo Dos", "22222222", 52, "F", "Obra social X", "12345/01", "10/09/2026", h2_b, c13_b),
+        ("Paciente Ejemplo Uno", "11111111", 35, "M", "particular", "", "2026-09-10", h2_a, ch4_a),
+        ("Paciente Ejemplo Dos", "22222222", 52, "F", "Obra social X", "12345/01", "10/09/2026", h2_b, ch4_b),
     ]
-    for nom, dni, edad, sexo, cob, afil, fecha, h2, c13 in ejemplos:
+    for nom, dni, edad, sexo, cob, afil, fecha, h2, ch4 in ejemplos:
         fila = {"nombre": nom, "dni": dni, "edad": edad, "sexo": sexo, "obra_social": cob,
                 "nro_afiliado": afil, "fecha_estudio": fecha}
         
-        for t, a, b in zip(tiempos_medicion(cfg), h2, c13):
-            fila[f"h2_{t}"], fila[f"c13_{t}"] = a, b
+        for t, a, b in zip(tiempos_medicion(cfg), h2, ch4):
+            fila[f"h2_{t}"], fila[f"ch4_{t}"] = a, b
 
 
         ws.append([fila.get(c) for c in cols])
@@ -330,7 +333,7 @@ def crear_planilla_modelo(ruta, cfg):
     ayuda = wb.create_sheet("Instrucciones")
     for linea in [
         "UNA FILA POR PACIENTE. Borrar las filas de ejemplo antes de usar.",
-        "OBLIGATORIOS: nombre, dni, fecha_estudio, diagnostico y los valores iniciales (h2(0) y c13(0)).",
+        "OBLIGATORIOS: nombre, dni, fecha_estudio, diagnostico y los valores iniciales (h2(0) y ch4(0)).",
         "Formato de fecha: AAAA-MM-DD o DD/MM/AAAA.",
         "Valores h2_XX / c13_XX: ppm a los XX minutos. Dejar vacío si no se midió.",
         "Obra social, sede, estímulo y dieta previa: si se dejan vacíos usan los valores por default.",

@@ -42,9 +42,9 @@ ST_CELDA_ENC = _estilo("celenc", fontName="Helvetica-Bold", fontSize=7.6, leadin
 
 
 def _sub(texto):
-    """Escapa el texto y pone H2 / C13 con subíndice real (sin caracteres unicode)."""
+    """Escapa el texto y pone H2 / CH4 con subíndice real (sin caracteres unicode)."""
     t = escape(str(texto))
-    t = re.sub(r"\bC13\b", "C<sub>13</sub>", t)
+    t = re.sub(r"\bCH4\b", "CH<sub>4</sub>", t)
     t = re.sub(r"\bH2\b", "H<sub>2</sub>", t)
     return t
 
@@ -93,17 +93,24 @@ def _ruta(base_dir, nombre):
     
 #     return t
 
+def _linea_contacto(l):
+    """Acepta texto simple o {"texto": ..., "url": ...} (con hipervínculo)."""
+    
+    if isinstance(l, dict):
+        return (f'<u><a href="{escape(l["url"])}" color="#860001">' f'{escape(l["texto"])}</a></u>')
+    
+    return escape(l)
+
 # ---- Opción 2 de encabezado: Logo a izquierda, Datos de contactos a derecha
 
-def _encabezado(cfg, base_dir):
+def _encabezado(cfg, base_dir, centro):
 
-    centro = cfg["centro"]
     logo = _ruta(base_dir, centro.get("logo"))
 
     marca = Image(str(logo), width=78 * mm, height=78 * mm / 3.05) if logo else Paragraph(escape(centro["nombre"]), ST_TITULO)
 
     estilo_der = ParagraphStyle("der", parent=ST_DIRECCION, alignment=TA_RIGHT, fontSize=6.8, leading=8.8)
-    direccion = Paragraph("<br/>".join(escape(l) for l in centro["lineas_encabezado"]), estilo_der)
+    direccion = Paragraph("<br/>".join(_linea_contacto(l) for l in centro["lineas_encabezado"]), estilo_der)
 
     t = Table([[marca, direccion]], colWidths=[100 * mm, 66 * mm], hAlign="LEFT")
     t.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
@@ -120,9 +127,9 @@ def _datos_paciente(reg):
     edad = f"{reg['edad']} años" if reg["edad"] else ""
     
     t = Table(
-        [[fila("Paciente", reg["nombre"]), fila("DNI", reg["dni"])],
+        [[fila("Paciente", reg["nombre"]), fila("DNI", reg["dni"]), fila("Sexo", reg["sexo"])],
          [fila("Obra Social", reg["obra_social"]), fila("Edad", edad)]],
-        colWidths=[100 * mm, 66 * mm], hAlign="LEFT")
+        colWidths=[80 * mm, 66 * mm], hAlign="LEFT")
     
     t.setStyle(TableStyle([("LEFTPADDING", (0, 0), (-1, -1), 0),
                            ("TOPPADDING", (0, 0), (-1, -1), 0),
@@ -135,10 +142,10 @@ def _datos_paciente(reg):
 def _tabla_y_grafico(reg, cfg):
 
     filas = [[Paragraph("TIEMPO", ST_CELDA_ENC), Paragraph("H<sub>2</sub>", ST_CELDA_ENC),
-              Paragraph("C<sub>13</sub>", ST_CELDA_ENC)]]
+              Paragraph("CH<sub>4</sub>", ST_CELDA_ENC)]]
     
     for t in tiempos_tabla(cfg, reg["intervalo_tiempo"]):
-        filas.append([f"{t:02d}", _num(reg["h2"].get(t)), _num(reg["c13"].get(t))])
+        filas.append([f"{t:02d}", _num(reg["h2"].get(t)), _num(reg["ch4"].get(t))])
     
     tabla = Table(filas, colWidths=[15 * mm, 9 * mm, 10 * mm], rowHeights=13.2)
     tabla.setStyle(TableStyle([
@@ -171,12 +178,13 @@ def _linea():
 
 def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
     est, prof = cfg["estudio"], cfg["profesional"]
+    centro = (cfg["centro_tostado"] if reg["sede"] == "San Lorenzo 1644, Tostado, Santa Fe" else cfg["centro_cemafe"])
 
     def decorar(canvas, doc):
         canvas.saveState()
         canvas.setFillColor(NARANJA_BARRA)
         canvas.rect(MARGEN_X, A4[1] - 11 * mm, 65 * mm, 2 * mm, stroke=0, fill=1)
-        leyenda = Paragraph(escape(cfg["centro"]["leyenda"]), ST_LEYENDA)
+        leyenda = Paragraph(escape(centro["leyenda"]), ST_LEYENDA)
         w, h = leyenda.wrap(A4[0] - 2 * MARGEN_X, 30 * mm)
         leyenda.drawOn(canvas, MARGEN_X, 14 * mm)
         canvas.restoreState()
@@ -185,10 +193,10 @@ def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
                             leftMargin=MARGEN_X, rightMargin=MARGEN_X,
                             topMargin=17 * mm, bottomMargin=30 * mm,
                             title=f"Informe {est['titulo']} - {reg['nombre']}",
-                            author=cfg["centro"]["nombre"])
+                            author=prof["web"])
 
     story = [
-        _encabezado(cfg, base_dir), _linea(),
+        _encabezado(cfg, base_dir, centro), _linea(),
         _datos_paciente(reg), _linea(),
         Spacer(1, 4 * mm),
         Paragraph(f"Fecha de estudio: {escape(reg['fecha_estudio'])} - "
@@ -210,7 +218,7 @@ def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
 
     firma = _ruta(base_dir, prof.get("firma_imagen"))
     if firma:
-        img = Image(str(firma), width=47 * mm, height=30 * mm, kind="direct")
+        img = Image(str(firma), width=50 * mm, height=30 * mm, kind="direct")
         img.hAlign = "CENTER"
         story.append(img)
     else:

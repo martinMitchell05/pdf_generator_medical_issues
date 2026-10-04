@@ -1,4 +1,4 @@
-""" Gráfica de curvas H2 y C13 (matplotlib, sin ventanas: backend Agg) """
+""" Gráfica de curvas H2 y CH4 (matplotlib, sin ventanas: backend Agg) """
 from io import BytesIO
 
 import matplotlib
@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from datos import tiempos_medicion
 
 COLOR_H2 = "#FF6600"
-COLOR_C13 = "#333333"
+COLOR_CH4 = "#333333"
 
 # Proporción del gráfico en el PDF (ancho x alto en mm)
 ANCHO_MM, ALTO_MM = 128, 72
@@ -21,11 +21,11 @@ def crear_grafico(reg, cfg):
     fig, ax = plt.subplots(figsize=(ANCHO_MM / 25.4, ALTO_MM / 25.4), dpi=220)
 
     t_h2 = sorted(reg["h2"])
-    t_c13 = sorted(reg["c13"])
+    t_ch4 = sorted(reg["ch4"])
     ax.plot(t_h2, [reg["h2"][t] for t in t_h2], color=COLOR_H2, marker="o", markersize=3.5, linewidth=1.3, label="H2")
-    ax.plot(t_c13, [reg["c13"][t] for t in t_c13], color=COLOR_C13, marker="D", markersize=3, linewidth=1.3, label="C13")
+    ax.plot(t_ch4, [reg["ch4"][t] for t in t_ch4], color=COLOR_CH4, marker="D", markersize=3, linewidth=1.3, label="CH4")
 
-    maximo = max(list(reg["h2"].values()) + list(reg["c13"].values()) + [8])
+    maximo = max(list(reg["h2"].values()) + list(reg["ch4"].values()) + [8])
     ax.set_ylim(0, maximo * 1.15)
     ax.set_xlim(-6, est["duracion_min"] + 6)
     pasos = tiempos_medicion(cfg, reg["intervalo_tiempo"])
@@ -44,7 +44,7 @@ def crear_grafico(reg, cfg):
     ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), frameon=False, fontsize=7, handlelength=1.6)
 
     fig.suptitle(est["titulo_grafico"], fontsize=10.5, fontweight="bold", color="#222222", y=0.965)
-    fig.text(0.5, 0.875, cfg["centro"]["web"], ha="center", fontsize=6.5, color="#777777")
+    fig.text(0.5, 0.875, cfg["profesional"]["web"], ha="center", fontsize=6.5, color="#777777")
     fig.subplots_adjust(left=0.08, right=0.86, top=0.80, bottom=0.11)
 
     buf = BytesIO()
