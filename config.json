@@ -1,32 +1,37 @@
 {
-  "centro_tostado": {
-    "nombre": "Sattino GastroBreath",
-    "logo": "logo_3.png",
-    "lineas_encabezado": [
-      "CEMIT, San Lorenzo 1644, Tostado, Santa Fe",
-      "Teléfono: +054 9 3491 470480",
-      { "texto": "CEL./WhatsApp: +054 9 3491500105", "url": "https://wa.me/54934915001​05" },
-      { "texto": "Instagram: @gastrosattino", "url": "https://instagram.com/gastrosattino" },
-      { "texto": "Email: gastrosattino@gmail.com",   "url": "mailto:gastrosattino@gmail.com" }
-    ],
-    "sede_default": "San Lorenzo 1644, Tostado, Santa Fe",
-    "leyenda": "Informe Confidencial. Secreto médico. Alcances del código 156 del Código Penal. El resultado debe ser evaluado en el contexto de una consulta médica con el profesional que lo ha solicitado. INFORME VALIDADO ELECTRÓNICAMENTE. LOS DATOS SE ENCUENTRAN RESERVADOS EN EL SISTEMA INFORMÁTICO."
-  },
+  "centros" : {
+    
+    "1": {
+      "nombre": "Sattino GastroBreath",
+      "logo": "logo_3.png",
+      "lineas_encabezado": [
+        "CEMIT, San Lorenzo 1644, Tostado, Santa Fe",
+        "Teléfono: +054 9 3491 470480",
+        { "texto": "CEL./WhatsApp: +054 9 3491500105", "url": "https://wa.me/5493491500105" },
+        { "texto": "Instagram: @gastrosattino", "url": "https://instagram.com/gastrosattino" },
+        { "texto": "Email: gastrosattino@gmail.com",   "url": "mailto:gastrosattino@gmail.com" }
+      ],
+      "sede_default": "(CEMIT) San Lorenzo 1644, Tostado, Santa Fe",
+      "leyenda": "Informe Confidencial. Secreto médico. Alcances del código 156 del Código Penal. El resultado debe ser evaluado en el contexto de una consulta médica con el profesional que lo ha solicitado. INFORME VALIDADO ELECTRÓNICAMENTE. LOS DATOS SE ENCUENTRAN RESERVADOS EN EL SISTEMA INFORMÁTICO."
+    },
 
-  "centro_cemafe": {
-    "nombre": "Sattino GastroBreath",
-    "logo": "logo_3.png",
-    "lineas_encabezado": [
-      "CEMAFE, Mendoza 2419, Santa Fe",
-      "Teléfono: +054 9 0342 4844400",
-      { "texto": "CEL./WhatsApp: +054 9 3491500105", "url": "https://wa.me/54934915001​05" },
-      { "texto": "Instagram: @gastrosattino", "url": "https://instagram.com/gastrosattino" },
-      { "texto": "Email: gastrosattino@gmail.com",   "url": "mailto:gastrosattino@gmail.com" }
-    ],
-    "sede_default": "Mendoza 2419, Santa Fe",
-    "leyenda": "Informe Confidencial. Secreto médico. Alcances del código 156 del Código Penal. El resultado debe ser evaluado en el contexto de una consulta médica con el profesional que lo ha solicitado. INFORME VALIDADO ELECTRÓNICAMENTE. LOS DATOS SE ENCUENTRAN RESERVADOS EN EL SISTEMA INFORMÁTICO."
+    "2": {
+      "nombre": "Sattino GastroBreath",
+      "logo": "logo_3.png",
+      "lineas_encabezado": [
+        "CEMAFE, Mendoza 2419, Santa Fe",
+        "Teléfono: +054 9 0342 4844400",
+        { "texto": "CEL./WhatsApp: +054 9 3491500105", "url": "https://wa.me/5493491500105" },
+        { "texto": "Instagram: @gastrosattino", "url": "https://instagram.com/gastrosattino" },
+        { "texto": "Email: gastrosattino@gmail.com",   "url": "mailto:gastrosattino@gmail.com" }
+      ],
+      "sede_default": "(CEMAFE) Mendoza 2419, Santa Fe",
+      "leyenda": "Informe Confidencial. Secreto médico. Alcances del código 156 del Código Penal. El resultado debe ser evaluado en el contexto de una consulta médica con el profesional que lo ha solicitado. INFORME VALIDADO ELECTRÓNICAMENTE. LOS DATOS SE ENCUENTRAN RESERVADOS EN EL SISTEMA INFORMÁTICO."
   
+    }
+
   },
+  
 
   "estudio": {
     "titulo": "TAE SOBRECRECIMIENTO BACTERIANO INTESTINAL",

@@ -178,7 +178,7 @@ def _linea():
 
 def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
     est, prof = cfg["estudio"], cfg["profesional"]
-    centro = (cfg["centro_tostado"] if reg["sede"] == "San Lorenzo 1644, Tostado, Santa Fe" else cfg["centro_cemafe"])
+    centro = reg["sede"]
 
     def decorar(canvas, doc):
         canvas.saveState()
@@ -203,7 +203,7 @@ def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
                   f"OBRA SOCIAL: {escape(reg['obra_social'])}", ST_FECHA),
         Paragraph(escape(est["titulo"]), ST_TITULO),
         Paragraph(_sub(est["gases"]), ST_TITULO),
-        Paragraph(f"Sede: {escape(reg['sede'])}", ST_SEDE),
+        Paragraph(f"Sede: {escape(centro['sede_default'])}", ST_SEDE),
         Spacer(1, 5 * mm),
         _tabla_y_grafico(reg, cfg),
         Spacer(1, 5 * mm),

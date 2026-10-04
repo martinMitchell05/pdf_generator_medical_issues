@@ -24,9 +24,8 @@ Genera informes PDF con una estructura prefijada: encabezado, tabla + curva (gr�
 - Intervalos de tiempo variables [x]    ***Completado***
 - Escritura de diagnóstico práctica [x]
 - Meter links de contacto (Ig, Mail, etc) [x] ***Completado***
-- Guardar en el JSON los datos de las distintas "sedes" en las que trabaja (Poder elegir entre ellas automáticamente) [x] ***Parcialmente completo***
+- Guardar en el JSON los datos de las distintas "sedes" en las que trabaja (Poder elegir entre ellas automáticamente) [x] ***Completado***
 
-Para las "sedes", guardar por ID en el JSON, por si en algún momento hay muchas sedes, acceder directamente a cfg["sede"]["id"]
 
 ## Desarrollo
     pip install -r requirements.txt

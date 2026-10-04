@@ -126,7 +126,8 @@ def armar_registro(fila, cfg):
     reg["fecha_estudio"] = parse_fecha(fila.get("fecha_estudio"))
     reg["obra_social"] = reg["obra_social"] or est["cobertura_default"]
     
-    reg["sede"] = (cfg["centro_cemafe"]["sede_default"] if reg["sede"] == "2" else cfg["centro_tostado"]["sede_default"])
+    sede_elegida = reg["sede"]  # "1" | "2" | ...
+    reg["sede"] = cfg["centros"].get(sede_elegida) or cfg["centros"]["1"]   # si se deja vacía la clave, entonces elegir la default
 
     reg["sustrato"] = reg["sustrato"] or est["estimulo_default"]
     reg["dieta_previa"] = reg["dieta_previa"] or est["dieta_default"]
@@ -216,11 +217,11 @@ def leer_planilla(ruta, cfg):
 def _preguntar(texto, defecto="", obligatorio=False):
     while True:
         
-        sufijo = f" [{defecto}]" if defecto else ""
         if texto != "Sede":
+            sufijo = f" [{defecto}]" if defecto else ""
             r = input(f"  {texto}{sufijo}: ").strip() or defecto
         else:
-            r = input(f"  {texto} 1. {sufijo}, Sede 2. [ Cemafe ]: ").strip() or defecto
+            r = input(f"  {texto}s [{defecto}. CEMIT (default), 2. CEMAFE] : ").strip() or defecto
 
         if r or not obligatorio:
             return r
@@ -255,7 +256,7 @@ def pedir_manual(cfg):
             print(f"    {e}")
 
 
-    fila["sede"] = _preguntar("Sede", cfg["centro_tostado"]["sede_default"])
+    fila["sede"] = _preguntar("Sede", "1")
     fila["sustrato"] = _preguntar("Sustrato", est["estimulo_default"])
 
     while True:

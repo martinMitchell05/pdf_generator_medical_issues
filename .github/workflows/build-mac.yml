@@ -8,13 +8,20 @@ on:
 jobs:
   build:
     runs-on: macos-latest   # Apple Silicon (M1/M2/M3/M4). Ver README para Intel.
+    
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: ./build_mac.sh
+      
+      - name: Dar permisos de ejecución y compilar
+        run: |
+          chmod +x build_mac.sh
+          ./build_mac.sh
+
       - uses: actions/upload-artifact@v4
         with:
-          name: Informes_AirTest_macOS
-          path: dist/Informes_AirTest.zip
+          name: TEST_SIBO_macOS
+          path: dist/Paquete.zip
