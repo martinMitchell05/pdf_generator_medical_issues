@@ -4,7 +4,7 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
@@ -14,8 +14,8 @@ from reportlab.platypus import (HRFlowable, Image, Paragraph, SimpleDocTemplate,
 from datos import tiempos_tabla
 from grafico import ALTO_MM, ANCHO_MM, crear_grafico
 
-AZUL = colors.HexColor("#1E9BC9")
-AZUL_BARRA = colors.HexColor("#3CC0DF")
+BORDO = colors.HexColor("#860001")
+NARANJA_BARRA = colors.HexColor("#FF6600")    #FF6600
 GRIS = colors.HexColor("#555555")
 GRIS_CLARO = colors.HexColor("#DDDDDD")
 OSCURO = colors.HexColor("#333333")
@@ -29,10 +29,10 @@ def _estilo(nombre, **kw):
     return ParagraphStyle(nombre, **base)
 
 
-ST_DIRECCION = _estilo("dir", fontSize=6.3, leading=7.6, textColor=GRIS)
+ST_DIRECCION = _estilo("dir", fontSize=7, leading=7.6, textColor=GRIS)
 ST_PACIENTE = _estilo("pac", fontSize=9.5, leading=13)
 ST_FECHA = _estilo("fecha", fontName="Helvetica-Bold", fontSize=11.5, leading=15, textColor=GRIS)
-ST_TITULO = _estilo("tit", fontSize=10, leading=15, textColor=AZUL)
+ST_TITULO = _estilo("tit", fontSize=10, leading=15, textColor=BORDO)
 ST_SEDE = _estilo("sede", fontName="Helvetica-Bold", fontSize=9.5, leading=13, textColor=GRIS, spaceBefore=3)
 ST_TEXTO = _estilo("txt", fontSize=7.6, leading=10.6)
 ST_FIRMA = _estilo("firma", fontSize=9.5, leading=13, alignment=TA_CENTER, textColor=GRIS)
@@ -67,28 +67,48 @@ def _ruta(base_dir, nombre):
     return p if p.exists() else None
 
 
+# ---- Opción de encabezado inicial (Todo LEFT)
+
+# def _encabezado(cfg, base_dir):
+
+#     centro = cfg["centro"]
+#     logo = _ruta(base_dir, centro.get("logo"))
+
+#     if logo:
+#         marca = Image(str(logo), width=72 * mm, height=32 * mm, kind="proportional")
+#         marca.hAlign = "CENTER"
+#     else:  # marcador de texto si no hay archivo de logo
+#         marca = Paragraph(
+#             f'<font color="#6EC1E4" size="30">{escape(centro["nombre"][:3])}</font>'
+#             f'<font color="#3B9CC9" size="30">{escape(centro["nombre"][3:])}</font>',
+#             _estilo("logo", fontSize=30, leading=32))
+        
+#     direccion = Paragraph("<br/>".join(escape(l) for l in centro["lineas_encabezado"]), ST_DIRECCION)
+    
+#     t = Table([[marca], [direccion]], colWidths=[100 * mm], hAlign="LEFT")
+#     t.setStyle(TableStyle([("LEFTPADDING", (0, 0), (-1, -1), 0),
+#                            ("TOPPADDING", (0, 0), (-1, -1), 0),
+#                            ("BOTTOMPADDING", (0, 0), (-1, -1), 1)]))
+
+    
+#     return t
+
+# ---- Opción 2 de encabezado: Logo a izquierda, Datos de contactos a derecha
+
 def _encabezado(cfg, base_dir):
 
     centro = cfg["centro"]
     logo = _ruta(base_dir, centro.get("logo"))
 
-    if logo:
-        marca = Image(str(logo), width=38 * mm, height=12 * mm, kind="proportional")
-        marca.hAlign = "LEFT"
-    else:  # marcador de texto si no hay archivo de logo
-        marca = Paragraph(
-            f'<font color="#6EC1E4" size="30">{escape(centro["nombre"][:3])}</font>'
-            f'<font color="#3B9CC9" size="30">{escape(centro["nombre"][3:])}</font>',
-            _estilo("logo", fontSize=30, leading=32))
-        
-    direccion = Paragraph("<br/>".join(escape(l) for l in centro["lineas_encabezado"]), ST_DIRECCION)
-    
-    t = Table([[marca], [direccion]], colWidths=[100 * mm], hAlign="LEFT")
-    t.setStyle(TableStyle([("LEFTPADDING", (0, 0), (-1, -1), 0),
-                           ("TOPPADDING", (0, 0), (-1, -1), 0),
-                           ("BOTTOMPADDING", (0, 0), (-1, -1), 1)]))
+    marca = Image(str(logo), width=78 * mm, height=78 * mm / 3.05) if logo else Paragraph(escape(centro["nombre"]), ST_TITULO)
 
-    
+    estilo_der = ParagraphStyle("der", parent=ST_DIRECCION, alignment=TA_RIGHT, fontSize=6.8, leading=8.8)
+    direccion = Paragraph("<br/>".join(escape(l) for l in centro["lineas_encabezado"]), estilo_der)
+
+    t = Table([[marca, direccion]], colWidths=[100 * mm, 66 * mm], hAlign="LEFT")
+    t.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                           ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                           ("RIGHTPADDING", (0, 0), (-1, -1), 0)]))
     return t
 
 
@@ -102,7 +122,6 @@ def _datos_paciente(reg):
     t = Table(
         [[fila("Paciente", reg["nombre"]), fila("DNI", reg["dni"])],
          [fila("Obra Social", reg["obra_social"]), fila("Edad", edad)]],
-        #  [fila("N°", reg["nro_afiliado"]), ""]],
         colWidths=[100 * mm, 66 * mm], hAlign="LEFT")
     
     t.setStyle(TableStyle([("LEFTPADDING", (0, 0), (-1, -1), 0),
@@ -155,7 +174,7 @@ def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
 
     def decorar(canvas, doc):
         canvas.saveState()
-        canvas.setFillColor(AZUL_BARRA)
+        canvas.setFillColor(NARANJA_BARRA)
         canvas.rect(MARGEN_X, A4[1] - 11 * mm, 65 * mm, 2 * mm, stroke=0, fill=1)
         leyenda = Paragraph(escape(cfg["centro"]["leyenda"]), ST_LEYENDA)
         w, h = leyenda.wrap(A4[0] - 2 * MARGEN_X, 30 * mm)
@@ -171,19 +190,19 @@ def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
     story = [
         _encabezado(cfg, base_dir), _linea(),
         _datos_paciente(reg), _linea(),
+        Spacer(1, 4 * mm),
         Paragraph(f"Fecha de estudio: {escape(reg['fecha_estudio'])} - "
                   f"OBRA SOCIAL: {escape(reg['obra_social'])}", ST_FECHA),
         Paragraph(escape(est["titulo"]), ST_TITULO),
         Paragraph(_sub(est["gases"]), ST_TITULO),
         Paragraph(f"Sede: {escape(reg['sede'])}", ST_SEDE),
-        Spacer(1, 3 * mm),
+        Spacer(1, 5 * mm),
         _tabla_y_grafico(reg, cfg),
-        Spacer(1, 4 * mm),
+        Spacer(1, 5 * mm),
         _bloque("Sustrato", reg["sustrato"]),
         _bloque("Dieta previa", reg["dieta_previa"]),
-        # _bloque("Procedimiento", est["procedimiento"]),
         _bloque("Causa", reg["causa"]),
-        # _bloque("Criterio", est["criterio"]),
+        Spacer(1, 5 * mm),
         _bloque("Diagnóstico", reg["diagnostico"]),
         _bloque("Comentarios", reg["comentarios"]),
         Spacer(1, 10 * mm),
@@ -191,14 +210,14 @@ def generar_pdf(reg, cfg, ruta_salida, base_dir="."):
 
     firma = _ruta(base_dir, prof.get("firma_imagen"))
     if firma:
-        img = Image(str(firma), width=35 * mm, height=14 * mm, kind="proportional")
+        img = Image(str(firma), width=47 * mm, height=30 * mm, kind="direct")
         img.hAlign = "CENTER"
         story.append(img)
     else:
         story.append(Spacer(1, 12 * mm))
+        story.append(Paragraph(escape(prof["nombre"]), ST_FIRMA))
+        story.append(Paragraph(escape(f"{prof['cargo']} - {prof['matricula']}"), ST_FIRMA))
 
-    story.append(Paragraph(escape(prof["nombre"]), ST_FIRMA))
-    story.append(Paragraph(escape(f"{prof['cargo']} - {prof['matricula']}"), ST_FIRMA))
 
     doc.build(story, onFirstPage=decorar, onLaterPages=decorar)
     

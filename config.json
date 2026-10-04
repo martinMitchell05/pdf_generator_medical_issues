@@ -2,7 +2,7 @@
   "centro": {
     "nombre": "Sattino GastroBreath",
     "web": "@gastrosattino",
-    "logo": "logo.png",
+    "logo": "logo_3.png",
     "lineas_encabezado": [
       "San Lorenzo 1644, Tostado, Santa Fe",
       "CEL./WA: +054 9 3491500105",
@@ -22,22 +22,7 @@
     "cobertura_default": "particular",
     "intervalo_min_default": 15,
     "duracion_min": 120,
-    "tabla_hasta_min_default": 180,
-    "procedimiento": "Sobrecrecimiento bacteriano: Procedimiento: Se tomó muestra basal de aire espirado y se determinó la concentración de H2 y CH4 con cromatógrafo de gases GastroCheck Bedfont. Luego se administraron 75g de Glucosa disuelta en 240ml de agua. Posteriormente se obtuvieron nuevas muestras cada 15 minutos durante 2hs.",
-    "criterio": "Sobrecrecimiento Bacteriano: Criterios de positividad: Aumento en los niveles de H2 de más de 20 ppm (SIBO) y/o en los niveles de CH4 de más de 10 ppm (IMO) sobre el basal antes de los 90 minutos."
-  },
-
-  "criterios": {
-    "h2_umbral_ppm": 20,
-    "ch4_umbral_ppm": 10,
-    "ventana_min": 90,
-    "conclusion_automatica": false,
-    "conclusiones": {
-      "normal": "Patrón fermentativo intestinal con valores compatibles con la normalidad",
-      "sibo": "Patrón fermentativo intestinal compatible con SIBO (aumento de H2 sobre el basal)",
-      "imo": "Patrón fermentativo intestinal compatible con IMO (aumento de CH4 sobre el basal)",
-      "ambos": "Patrón fermentativo intestinal compatible con SIBO e IMO (aumento de H2 y CH4 sobre el basal)"
-    }
+    "tabla_hasta_min_default": 180
   },
 
   "profesional": {

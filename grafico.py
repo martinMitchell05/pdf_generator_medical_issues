@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from datos import tiempos_medicion
 
-COLOR_H2 = "#7DB4E6"
+COLOR_H2 = "#FF6600"
 COLOR_C13 = "#333333"
 
 # Proporción del gráfico en el PDF (ancho x alto en mm)

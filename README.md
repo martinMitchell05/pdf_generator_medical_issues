@@ -22,9 +22,10 @@ Genera informes PDF con una estructura prefijada: encabezado, tabla + curva (gr�
 
 **Opcionales (mejoran la prácticidad):**
 
-- Intervalos de tiempo variables [x] ***Completado***
-- Escritura de diagnóstico práctica []
+- Intervalos de tiempo variables [x]    ***Completado***
+- Escritura de diagnóstico práctica [x]
 - Meter links de contacto (Ig, Mail, etc) []
+- Guardar en el JSON los datos de las distintas "sedes" en las que trabaja (Poder elegir entre ellas automáticamente) []
 
 ## Desarrollo
     pip install -r requirements.txt
