@@ -23,11 +23,5 @@ PLANILLA
 - Se puede guardar como "pacientes.xlsx" en esta misma carpeta, o arrastrar
   el archivo a la Terminal cuando lo pida.
 
-PERSONALIZAR (config.json, se edita con TextEdit)
-- Datos del centro, procedimiento, criterio, profesional y matrícula.
-- Logo: poner "logo.png" en la carpeta. Firma: poner "firma.png".
 
-CONCLUSIÓN
-- Si la columna "conclusion" queda vacía, el programa propone una según el
-  criterio de config.json. Es una sugerencia: debe ser revisada y validada
-  por la profesional antes de entregar el informe.
+

@@ -6,6 +6,8 @@ __pycache__/
 *.xlsx
 *.xlsm
 *.png
+!logo.png
+!firma.png
 *.jpg
 *.jpeg
 
