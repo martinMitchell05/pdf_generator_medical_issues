@@ -221,7 +221,7 @@ def _preguntar(texto, defecto="", obligatorio=False):
             sufijo = f" [{defecto}]" if defecto else ""
             r = input(f"  {texto}{sufijo}: ").strip() or defecto
         else:
-            r = input(f"  {texto}s [{defecto}. CEMIT (default), 2. CEMAFE] : ").strip() or defecto
+            r = input(f"  {texto}s [{defecto}. CEMIT (default), 2. Galvez, 3. Santa Fe] : ").strip() or defecto
 
         if r or not obligatorio:
             return r
@@ -308,7 +308,7 @@ def crear_planilla_modelo(ruta, cfg):
         c.alignment = Alignment(horizontal="center")
 
     h2_a = [4, 8, 6, 5, 8, 4, 4, 4, 5]
-    ch4_a = [6, 5, 4, 6, 5, 5, 4, 6, 6]
+    ch4_a = [0]
     h2_b = [3, 6, 12, 20, 31, 38, 35, 30, 28]
     ch4_b = [2, 2, 3, 2, 3, 2, 2, 3, 2]
     ejemplos = [

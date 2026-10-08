@@ -7,7 +7,7 @@
       "lineas_encabezado": [
         "CEMIT, San Lorenzo 1644, Tostado, Santa Fe",
         "Teléfono: +054 9 3491 470480",
-        { "texto": "CEL./WhatsApp: +054 9 3491500105", "url": "https://wa.me/5493491500105" },
+        { "texto": "CEL./WhatsApp: +054 9 3424451530", "url": "https://wa.me/5493424451530" },
         { "texto": "Instagram: @gastrosattino", "url": "https://instagram.com/gastrosattino" },
         { "texto": "Email: gastrosattino@gmail.com",   "url": "mailto:gastrosattino@gmail.com" }
       ],
@@ -19,13 +19,27 @@
       "nombre": "Sattino GastroBreath",
       "logo": "logo.png",
       "lineas_encabezado": [
-        "CEMAFE, Mendoza 2419, Santa Fe",
-        "Teléfono: +054 9 0342 4844400",
-        { "texto": "CEL./WhatsApp: +054 9 3491500105", "url": "https://wa.me/5493491500105" },
+        "Sanatorio Integrados, Sarmiento 303, Galvez, Santa Fe",
+        "Teléfono: +054 9 03404431331",
+        { "texto": "CEL./WhatsApp: +054 9 3424451530", "url": "https://wa.me/5493424451530" },
         { "texto": "Instagram: @gastrosattino", "url": "https://instagram.com/gastrosattino" },
         { "texto": "Email: gastrosattino@gmail.com",   "url": "mailto:gastrosattino@gmail.com" }
       ],
-      "sede_default": "(CEMAFE) Mendoza 2419, Santa Fe",
+      "sede_default": "Sarmiento 303, Galvez, Santa Fe",
+      "leyenda": "Informe Confidencial. Secreto médico. Alcances del código 156 del Código Penal. El resultado debe ser evaluado en el contexto de una consulta médica con el profesional que lo ha solicitado. INFORME VALIDADO ELECTRÓNICAMENTE. LOS DATOS SE ENCUENTRAN RESERVADOS EN EL SISTEMA INFORMÁTICO."
+  
+    },
+
+    "3": {
+      "nombre": "Sattino GastroBreath",
+      "logo": "logo.png",
+      "lineas_encabezado": [
+        "Santa Fe de la Vera Cruz, Santa Fe",
+        { "texto": "CEL./WhatsApp: +054 9 3424451530", "url": "https://wa.me/5493424451530" },
+        { "texto": "Instagram: @gastrosattino", "url": "https://instagram.com/gastrosattino" },
+        { "texto": "Email: gastrosattino@gmail.com",   "url": "mailto:gastrosattino@gmail.com" }
+      ],
+      "sede_default": "Santa Fe Capital",
       "leyenda": "Informe Confidencial. Secreto médico. Alcances del código 156 del Código Penal. El resultado debe ser evaluado en el contexto de una consulta médica con el profesional que lo ha solicitado. INFORME VALIDADO ELECTRÓNICAMENTE. LOS DATOS SE ENCUENTRAN RESERVADOS EN EL SISTEMA INFORMÁTICO."
   
     }
